@@ -1,5 +1,5 @@
 #' @export
-plotHousehold_jp <- function(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, TIME_PERIOD, FLAG_ONLY_HOME = FALSE, HOME_CHANNEL) {
+plotHousehold <- function(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, TIME_PERIOD, FLAG_ONLY_HOME = FALSE, COUNTRY, HOME_CHANNEL) {
 
   wholeFileList <- list.files(path = HOUSEHOLD_DIR, full.names = FALSE, include.dirs = FALSE)
 
@@ -20,8 +20,14 @@ plotHousehold_jp <- function(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR
       stop("not a valid home")
 
     print(chosenFiles[homeIdx])
-    meterReadings <- read_feather(paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx])) %>%
-      filter(timestamp %within% TIME_PERIOD, channel == HOME_CHANNEL)
+
+    if (COUNTRY == "KR")
+      meterReadings <- read_feather(paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx])) %>%
+        filter(timestamp %within% TIME_PERIOD)
+    else if (COUNTRY == "JP")
+      meterReadings <- read_feather(paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx])) %>%
+        filter(timestamp %within% TIME_PERIOD, channel == HOME_CHANNEL)
+
 
     melt.active <- data.frame(timestamp = meterReadings$timestamp, value = meterReadings$active_power, sig_type = 'active')
     melt.reactive <- data.frame(timestamp = meterReadings$timestamp, value = meterReadings$reactive_power, sig_type = 'reactive')
@@ -46,11 +52,19 @@ plotHousehold_jp <- function(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR
 
       if( grepl(pattern = "home", x = aFile) ){
 
-        for(idx_ch in seq(1,2)){
-          tmpReadings <- meterReadings %>% filter(channel == idx_ch)
+        if (COUNTRY == "JP") {
+          for(idx_ch in seq(1,2)){
+            tmpReadings <- meterReadings %>% filter(channel == idx_ch)
+            plot(x=tmpReadings$timestamp, y=tmpReadings$active_power, type='l') # ann=FALSE, xaxt="n",
+            plot(x=tmpReadings$timestamp, y=tmpReadings$reactive_power, ann=FALSE, xaxt="n", type='l', yaxt='n'); axis(side=4)
+          }
+        } else if (COUNTRY == "KR") {
+          tmpReadings <- meterReadings
           plot(x=tmpReadings$timestamp, y=tmpReadings$active_power, type='l') # ann=FALSE, xaxt="n",
           plot(x=tmpReadings$timestamp, y=tmpReadings$reactive_power, ann=FALSE, xaxt="n", type='l', yaxt='n'); axis(side=4)
         }
+
+
       } else {
         plot(x=meterReadings$timestamp, y=meterReadings$active_power, type='l') # ann=FALSE, xaxt="n",
         plot(x=meterReadings$timestamp, y=meterReadings$reactive_power, ann=FALSE, xaxt="n", type='l', yaxt='n'); axis(side=4)
