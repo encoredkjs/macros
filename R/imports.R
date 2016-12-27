@@ -2,6 +2,10 @@
 NULL
 #' @import feather
 NULL
+#' @import rmarkdown
+NULL
+#' @import destroyForce
+NULL
 #' @importFrom magrittr %>% %<>%
 NULL
 #' @importFrom lubridate %within% %--%
