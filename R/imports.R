@@ -4,7 +4,13 @@ NULL
 NULL
 #' @import rmarkdown
 NULL
+#' @import stringr
+NULL
 #' @import destroyForce
+NULL
+#' @import baseEncored
+NULL
+#' @import MillenniumFalcon
 NULL
 #' @importFrom magrittr %>% %<>%
 NULL
