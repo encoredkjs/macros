@@ -22,18 +22,7 @@ plotHousehold(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, TIME_PERIOD, 
 # =========================================================================================================
 
 # =========================================================================================================
-# libraries
-library(macros)
-
-# parameter setting
-SUMMARY_DIR <- "/disk3/data_tmp/2016-12-27T07:08:12.396002/"
-FIGURE_FILE <- "HeatMap.png"
-APP_NAME <- "세탁기"
-
-getReport_NILM(SUMMARY_DIR, FIGURE_FILE, APP_NAME)
-# =========================================================================================================
-
-# =========================================================================================================
+#  FUNCTION TO EXAMINE NILM RESULTS (1/3)
 # process RAW files
 library(macros)
 library(dplyr)
@@ -67,3 +56,45 @@ IGNORE_EXIST_DATA <- TRUE
 
 loadReportFiles(USER_LIST, SOURCE_DIR, DATA_DIR, OBJ, CHOSEN_SITE_DEC, CHOSEN_SITE_HEX, CHOSEN_APP, ID_START, ID_END, IGNORE_EXIST_DATA)
 # =========================================================================================================
+
+# =========================================================================================================
+#  FUNCTION TO EXAMINE NILM RESULTS (2/3)
+# libraries
+library(macros)
+
+# parameter setting
+DATA_DIR <- "/home/kjs/data/jp/jp_201610/yazaki/"
+
+CHOSEN_APP <- "세탁기"
+
+startTimestampForMeta <- "2016-10-01 00:00:00"
+endTimestampForMeta <- "2016-10-15 00:00:00"
+
+startTimestampForSummary <- NULL # "2016-10-01 00:00:00"
+endTimestampForSummary <- NULL # "2016-10-15 00:00:00"
+
+POWER_THRES <- 1
+
+CHOSEN_SITE_DEC <- c() # c(4093509610, 4093509620, 4093509618)
+CHOSEN_SITE_HEX <- c()
+
+getSummaryWithMeta_NILM(DATA_DIR, CHOSEN_APP,
+                        startTimestampForMeta, endTimestampForMeta,
+                        startTimestampForSummary, endTimestampForSummary,
+                        POWER_THRES, CHOSEN_SITE_DEC, CHOSEN_SITE_HEX)
+# =========================================================================================================
+
+# =========================================================================================================
+#  FUNCTION TO EXAMINE NILM RESULTS (3/3)
+# libraries
+library(macros)
+
+# parameter setting
+SUMMARY_DIR <- "/disk3/data_tmp/2017-01-03T02:57:31.821742/"
+# SUMMARY_DIR <- "/disk3/data_tmp/2016-12-30T05:59:53.963564/"
+FIGURE_FILE <- "HeatMap.png"
+APP_NAME <- "세탁기"
+
+getReport_NILM(SUMMARY_DIR, FIGURE_FILE, APP_NAME)
+# =========================================================================================================
+
