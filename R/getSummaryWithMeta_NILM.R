@@ -96,37 +96,4 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
     return(NULL)
   })
 
-
-
-
-
-
-
-
-
-
-
-  tz <- 'Asia/Tokyo' # 'Asia/Seoul'
-
-  META_DIR <- "/home/kjs/data/jp/jp_201610/meta-NEWwasher/"
-
-  NILM_SUMMARY_DIR <- "/home/kjs/data/jp/jp_201610/result-NEWwasher/"
-
-
-
-  if(length(CHOSEN_SITE_DEC) != 0)
-    CHOSEN_SITE <- c(convertDec2Hex(CHOSEN_SITE_DEC), CHOSEN_SITE_HEX)
-  else
-    CHOSEN_SITE <- CHOSEN_SITE_HEX
-
-  CHOSEN_SITE <- CHOSEN_SITE %>% unique(.)
-
-
-
-
-
-
-
-
-
 }

@@ -70,6 +70,7 @@ showWhenAppIsOn <- function(METHOD = "plot",
       activeRange <- jpTest::activePartOfData(plug)
 
       saveRDS( activeRange, paste0(RESULT_DIR, gsub('.feather',".rds",onePair$plug )) )
+      print("done")
 
     }
 
