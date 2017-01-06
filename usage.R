@@ -1,24 +1,45 @@
 # =========================================================================================================
+#  FUNCTION TO PLOT DATA FILES (1/2): IN A SPECIFIC TIME
 # libraries
 library(lubridate)
 library(macros)
 
 # parameter setting
-FLAG_ONLY_HOME <- T
+FLAG_ONLY_HOME <- F
 HOME_CHANNEL <- 1 # valid when FLAG_ONLY_HOME == TRUE
 
 FILE_SEP <- "_"
-FILE_FIRST_WORD <- "11"
+FILE_FIRST_WORD <- "4076994662"
 FILE_TYPE <- ".feather" # feather only
 
 COUNTRY <- "JP"
 
 # HOUSEHOLD_DIR <- "/home/sjlee/data/jpData/test1/feather/" # June 2016
-HOUSEHOLD_DIR <- "/home/kjs/data/jp/files/" # August 2016
-TIME_PERIOD <- as.POSIXct('2016-08-15 19:30:00',tz='Asia/Seoul') %--% as.POSIXct('2016-08-15 19:32:00',tz='Asia/Seoul')
+HOUSEHOLD_DIR <- "/home/kjs/data/jp/jp_201612/teto/" # August 2016
+TIME_PERIOD <- as.POSIXct('2016-12-12 16:00:00',tz='Asia/Seoul')%--% as.POSIXct('2016-12-12 22:00:00',tz='Asia/Seoul')
 # TIME_PERIOD <- as.POSIXct('2016-07-17 08:30:00',tz='Asia/Seoul') %--% as.POSIXct('2016-07-17 09:30:00',tz='Asia/Seoul')
 
 plotHousehold(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, TIME_PERIOD, FLAG_ONLY_HOME, COUNTRY, HOME_CHANNEL)
+# =========================================================================================================
+
+# =========================================================================================================
+#  FUNCTION TO PLOT DATA FILES (2/2): WHEN TURNED ON
+# libraries
+library(macros)
+
+# parameter setting
+METHOD <- "file" # "plot" # "file" # "both"
+
+HOUSEHOLD_DIR <- "/home/kjs/data/jp/jp_201612/teto/"
+RESULT_DIR <- "/home/kjs/data/jp/jp_201612/aircon_tepco/"
+CHOSEN_APP <- "에어컨"
+
+PLOT_NUM_MAX <- 20
+
+AP_THRES_MIN <- 15 # IS NOT USED (i.e., USELESS)
+AP_CONSIDERED_MAX <- 5000
+
+showWhenAppIsOn(METHOD, HOUSEHOLD_DIR, RESULT_DIR, CHOSEN_APP, PLOT_NUM_MAX, AP_THRES_MIN, AP_CONSIDERED_MAX)
 # =========================================================================================================
 
 # =========================================================================================================
@@ -90,11 +111,30 @@ getSummaryWithMeta_NILM(DATA_DIR, CHOSEN_APP,
 library(macros)
 
 # parameter setting
-SUMMARY_DIR <- "/disk3/data_tmp/2017-01-03T02:57:31.821742/"
-# SUMMARY_DIR <- "/disk3/data_tmp/2016-12-30T05:59:53.963564/"
+SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:49:06.065606/"
+# SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T04:15:53.702929/"
+SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:48:16.153141/"
 FIGURE_FILE <- "HeatMap.png"
 APP_NAME <- "세탁기"
+# APP_NAME <- "전기밥솥"
 
 getReport_NILM(SUMMARY_DIR, FIGURE_FILE, APP_NAME)
 # =========================================================================================================
+
+# =========================================================================================================
+#  FUNCTION TO CONVERT (ENCORED) STANDARD RAW NILM FILE INTO TEPCO & TOHOKU STANDARD
+# libraries
+library(macros)
+options(scipen = 20)
+
+# parameter setting
+SOURCE_DIR <- "/home/kjs/sample/"
+SOURCE_FILE_TYPE <- "rds" # "csv"
+DATA_DIR <- "/home/kjs/result/"
+
+DATA_SUFFIX <- "2016-12"
+
+convertNILMResultToTepcoSTD(SOURCE_DIR, SOURCE_FILE_TYPE, DATA_DIR, DATA_SUFFIX)
+# =========================================================================================================
+x <- fread("~/jsonForReport/tepcoSample/result/F3FDFFF1_NILM_1s_62_refrigerator1_2016-12")
 

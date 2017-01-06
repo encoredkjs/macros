@@ -91,7 +91,7 @@ loadReportFiles <- function(USER_LIST,
     # accumulate csv files
     serialKey <- validOBJInfo$skey[Idx]
     print(serialKey)
-    cat("progress : ", round(Idx/nrow(validOBJInfo)*100), " %; ", nrow(validOBJInfo) - Idx +1, " objects left")
+    cat("progress :", round(Idx/nrow(validOBJInfo)*100, digits = 1), "%;", nrow(validOBJInfo) - Idx +1, OBJ, "left \n")
     chosenFiles <- subGroupsOfFiles %>% filter(skey == serialKey)
     fileName <- validOBJInfo$fname[Idx]
 

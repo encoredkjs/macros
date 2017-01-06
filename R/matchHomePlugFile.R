@@ -1,4 +1,5 @@
 matchHomePlugFile <- function( data, plug){
+
   existance <- grep(plug, data$fileName)
 
   if (length(existance) != 0 ){
