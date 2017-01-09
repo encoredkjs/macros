@@ -122,7 +122,8 @@ getReport_NILM(SUMMARY_DIR, FIGURE_FILE, APP_NAME)
 # =========================================================================================================
 
 # =========================================================================================================
-#  FUNCTION TO CONVERT (ENCORED) STANDARD RAW NILM FILE INTO TEPCO & TOHOKU STANDARD
+#  FUNCTION TO CONVERT (ENCORED) STANDARD RAW NILM FILE INTO TEPCO & TOHOKU STANDARD (1/2)
+#  note: This function has been merged to 'ForceManager'
 # libraries
 library(macros)
 options(scipen = 20)
@@ -136,5 +137,36 @@ DATA_SUFFIX <- "2016-12"
 
 convertNILMResultToTepcoSTD(SOURCE_DIR, SOURCE_FILE_TYPE, DATA_DIR, DATA_SUFFIX)
 # =========================================================================================================
+
+# =========================================================================================================
+#  FUNCTION TO CHECK INTEGRITY WITH TEPCO & TOHOKU STANDARD FILES (2/2)
+# libraries
+library(macros)
+# options(scipen = 20)
+
+DATA_DIR <- "/disk1/tepco_export/"
+WRITE_OUTPUT_FILE = FALSE
+SAVED_OUTPUT_FILE_WITH_PATH <- "~/result_tmp.txt"
+
+checkIntegrityOfTepcoStdFiles(DATA_DIR, WRITE_OUTPUT_FILE, SAVED_OUTPUT_FILE_WITH_PATH)
+# =========================================================================================================
+
+# =========================================================================================================
+# FUNCTION TO TYPE SYSTEM COMMAND USUALLY TO MODIFY FILES IN A FOLDER
+
+# libraries
+library(macros)
+SOURCE_DIR <- "/disk1/tepco_export/"
+FILE_KEYWORD <- "NILM"
+DATA_DIR <- "/disk1/tepco_export/submission/"
+
+DO_FUNCTION <- "MODIFY_FILE_NAME_FOR_TEPCO"
+
+modifyFilesUsingSysCommand(SOURCE_DIR, FILE_KEYWORD, DATA_DIR, DO_FUNCTION)
+# =========================================================================================================
+
 x <- fread("~/jsonForReport/tepcoSample/result/F3FDFFF1_NILM_1s_62_refrigerator1_2016-12")
+
+
+
 
