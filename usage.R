@@ -9,14 +9,14 @@ FLAG_ONLY_HOME <- F
 HOME_CHANNEL <- 1 # valid when FLAG_ONLY_HOME == TRUE
 
 FILE_SEP <- "_"
-FILE_FIRST_WORD <- "4076994662"
+FILE_FIRST_WORD <- "4076994667"
 FILE_TYPE <- ".feather" # feather only
 
 COUNTRY <- "JP"
 
 # HOUSEHOLD_DIR <- "/home/sjlee/data/jpData/test1/feather/" # June 2016
 HOUSEHOLD_DIR <- "/home/kjs/data/jp/jp_201612/teto/" # August 2016
-TIME_PERIOD <- as.POSIXct('2016-12-12 16:00:00',tz='Asia/Seoul')%--% as.POSIXct('2016-12-12 22:00:00',tz='Asia/Seoul')
+TIME_PERIOD <- as.POSIXct('2016-12-05 16:00:00',tz='Asia/Seoul')%--% as.POSIXct('2016-12-05 16:20:00',tz='Asia/Seoul')
 # TIME_PERIOD <- as.POSIXct('2016-07-17 08:30:00',tz='Asia/Seoul') %--% as.POSIXct('2016-07-17 09:30:00',tz='Asia/Seoul')
 
 plotHousehold(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, TIME_PERIOD, FLAG_ONLY_HOME, COUNTRY, HOME_CHANNEL)
@@ -53,25 +53,25 @@ options(httr_oob_default = TRUE)
 # supplementary functions
 targetGs <- gs_key(gs_ls('데이터 시리얼 관리표')$sheet_key)
 userList <-
-  gs_read(targetGs, ws = '메타정보관리-jp') # %>% filter( grepl(pattern = "야자키", x = Owner))
+  gs_read(targetGs, ws = '메타정보관리-jp') %>% filter( grepl(pattern = "tepco", x = Owner))
 names(userList) <- c("sn.parent", "ch.parent", "sn.dev", "ch.dev", "user", "division", "code", "x1", "x2","x3","x4","x5","x6","x7","x8")
 userList <- userList %>% select(user, division, code, sn.parent, sn.dev)
 
 # parameter setting
 USER_LIST <- userList
-DATA_DIR <- "/home/kjs/data/jp/jp_201610/files_new/"
-SOURCE_DIR <- "/disk3/raw_data_with_plug/jp-201610/"
+DATA_DIR <- "/home/kjs/data/jp/jp_201612/teto/"
+SOURCE_DIR <- "/disk3/raw_data_with_plug/jp-201612/"
 
-OBJ <- "home"
-# OBJ <- "plug"
+# OBJ <- "home"
+OBJ <- "plug"
 
-CHOSEN_SITE_DEC <- c(4093509610, 4093509620, 4093509618) # c()
-CHOSEN_SITE_HEX <- c()
+CHOSEN_SITE_DEC <- c() # c(4093509610, 4093509620, 4093509618) # c()
+CHOSEN_SITE_HEX <- c("F302006B")
 
-CHOSEN_APP <- c("세탁기","전기밥솥")
+CHOSEN_APP <- c("전자레인지")# c("세탁기","전기밥솥")
 
-ID_START <- '20161001' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
-ID_END   <- '20161031' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
+ID_START <- '20161201' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
+ID_END   <- '20161231' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
 
 IGNORE_EXIST_DATA <- TRUE
 
@@ -144,9 +144,9 @@ convertNILMResultToTepcoSTD(SOURCE_DIR, SOURCE_FILE_TYPE, DATA_DIR, DATA_SUFFIX)
 library(macros)
 # options(scipen = 20)
 
-DATA_DIR <- "/disk1/tepco_export/"
-WRITE_OUTPUT_FILE = FALSE
-SAVED_OUTPUT_FILE_WITH_PATH <- "~/result_tmp.txt"
+DATA_DIR <- "/home/kjs/tepco_submission/"
+WRITE_OUTPUT_FILE = TRUE
+SAVED_OUTPUT_FILE_WITH_PATH <- "~/result_tepcoChk.txt"
 
 checkIntegrityOfTepcoStdFiles(DATA_DIR, WRITE_OUTPUT_FILE, SAVED_OUTPUT_FILE_WITH_PATH)
 # =========================================================================================================
@@ -156,17 +156,21 @@ checkIntegrityOfTepcoStdFiles(DATA_DIR, WRITE_OUTPUT_FILE, SAVED_OUTPUT_FILE_WIT
 
 # libraries
 library(macros)
-SOURCE_DIR <- "/disk1/tepco_export/"
+SOURCE_DIR <- "/Users/kjs/Desktop/NILM_tepco/tepco_submission/"
 FILE_KEYWORD <- "NILM"
-DATA_DIR <- "/disk1/tepco_export/submission/"
+DATA_DIR <- "/Users/kjs/Desktop/TEPCO/2016-12/Encored_RawData/"
 
+DO_FUNCTION <- "MODIFY_COLUMN_FOR_TEPCO"
 DO_FUNCTION <- "MODIFY_FILE_NAME_FOR_TEPCO"
+DO_FUNCTION <- "DISTRIBUTE_FILES_TO_EACH_FOLDER_FOR_TEPCO"
 
-modifyFilesUsingSysCommand(SOURCE_DIR, FILE_KEYWORD, DATA_DIR, DO_FUNCTION)
+
+modifyFilesUsingSysCommand(SOURCE_DIR,
+                           FILE_KEYWORD,
+                           DATA_DIR,
+                           DO_FUNCTION)
 # =========================================================================================================
 
 x <- fread("~/jsonForReport/tepcoSample/result/F3FDFFF1_NILM_1s_62_refrigerator1_2016-12")
-
-
 
 
