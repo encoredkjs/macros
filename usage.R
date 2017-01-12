@@ -156,14 +156,14 @@ checkIntegrityOfTepcoStdFiles(DATA_DIR, WRITE_OUTPUT_FILE, SAVED_OUTPUT_FILE_WIT
 
 # libraries
 library(macros)
-SOURCE_DIR <- "/Users/kjs/Desktop/NILM_tepco/tepco_submission/"
+# SOURCE_DIR <- "~/data/storage/heavyLoads/"
+SOURCE_DIR <- "/home/kjs/data/storage/microwave/"
 FILE_KEYWORD <- "NILM"
-DATA_DIR <- "/Users/kjs/Desktop/TEPCO/2016-12/Encored_RawData/"
+DATA_DIR <- "/home/kjs/data/storage/microwave_typeFixed/"
 
-DO_FUNCTION <- "MODIFY_COLUMN_FOR_TEPCO"
-DO_FUNCTION <- "MODIFY_FILE_NAME_FOR_TEPCO"
-DO_FUNCTION <- "DISTRIBUTE_FILES_TO_EACH_FOLDER_FOR_TEPCO"
-
+DO_FUNCTION <- "MODIFY_FILE_NAME_AND_COLUMN_FOR_TEPCO"
+# DO_FUNCTION <- "MODIFY_FILE_NAME_FOR_TEPCO"
+# DO_FUNCTION <- "DISTRIBUTE_FILES_TO_EACH_FOLDER_FOR_TEPCO"
 
 modifyFilesUsingSysCommand(SOURCE_DIR,
                            FILE_KEYWORD,
