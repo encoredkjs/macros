@@ -1,7 +1,5 @@
 #' @import bit64
 NULL
-#' @import destroyForce
-NULL
 #' @import dplyr
 NULL
 #' @import feather
@@ -11,6 +9,12 @@ NULL
 #' @importFrom baseEncored convertHex2Dec convertDec2Hex
 NULL
 #' @importFrom data.table fread fwrite
+NULL
+#' @importFrom destroyForce summary.acc generateReportCore
+NULL
+#' @importFrom ForceEvent forceRiceCooker predict.forceRiceCooker
+NULL
+#' @importFrom ForcePattern forceWasher predict.forceWasher
 NULL
 #' @importFrom graphics plot
 NULL

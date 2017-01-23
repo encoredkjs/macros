@@ -3,8 +3,11 @@ loadReportFiles <- function(USER_LIST,
                            SOURCE_DIR,
                            DATA_DIR,
                            OBJ,
+                           COUNTRY = "jp",
                            CHOSEN_SITE_DEC,
                            CHOSEN_SITE_HEX,
+                           EXCLUDE_ID_DEC,
+                           EXCLUDE_ID_HEX,
                            CHOSEN_APP,
                            ID_START,
                            ID_END,
@@ -28,6 +31,16 @@ loadReportFiles <- function(USER_LIST,
 
   CHOSEN_SITE <- CHOSEN_SITE %>% unique(.)
 
+  ### -------------------------------------------------
+
+  if(length(EXCLUDE_ID_DEC) != 0)
+    EXCLUDE_ID <- c(convertDec2Hex(EXCLUDE_ID_DEC), EXCLUDE_ID_HEX)
+  else
+    EXCLUDE_ID <- EXCLUDE_ID_HEX
+
+  EXCLUDE_ID <- EXCLUDE_ID %>% unique(.)
+
+
   enertalkDevice <- USER_LIST %>% filter(division == "총량") %>%
     select(user, skey = sn.dev, pid = sn.parent, code) %>% unique(.) %>%
     mutate(class = "home") %>% mutate(division = class) %>%
@@ -39,17 +52,23 @@ loadReportFiles <- function(USER_LIST,
   else
     plugDevice <- USER_LIST %>% filter(division != "총량")
 
+  if(any(is.na(plugDevice$sn.parent))){
+    print("warning: remove plugs w/ no parent id")
+  }
+
+
   plugDevice <- plugDevice %>%
                 select(user,
                        skey = sn.dev,
                        pid = sn.parent,
                        code,
                        division) %>%
-                unique(.) %>%
+                filter(!is.na(pid)) %>%
                 mutate(class = "plug",
                        division = paste(
                                   convertHex2Dec(pid),
                                   division, sep='_'))
+
 
   if(length(CHOSEN_SITE) != 0) {
     plugDevice <- plugDevice %>% filter(pid %in% CHOSEN_SITE)
@@ -58,6 +77,12 @@ loadReportFiles <- function(USER_LIST,
 
   if(length(CHOSEN_APP) != 0)
     enertalkDevice <- enertalkDevice %>% filter(skey %in% unique(plugDevice$pid))
+
+  if(length(EXCLUDE_ID) != 0) {
+    plugDevice <- plugDevice %>% filter( !(pid %in% EXCLUDE_ID),
+                                         !(skey %in% EXCLUDE_ID) )
+    enertalkDevice <- enertalkDevice %>% filter( !(skey %in% EXCLUDE_ID) )
+  }
 
   deviceLists <- bind_rows(enertalkDevice, plugDevice) %>%
                  mutate(fname = paste0(DATA_DIR, paste(division,
@@ -105,7 +130,11 @@ loadReportFiles <- function(USER_LIST,
 
       csvFile <- fileName %>% gsub(".feather",".csv", .)
       system(command = paste("cat", paste( paste0(SOURCE_DIR,chosenFiles$file), collapse = " "), ">", csvFile, sep = " "))
-      wholeData <- loadCompactPowerData(path = csvFile, sampling_rate = 10, human_date = TRUE, tz = "Asia/Tokyo", cleanse = TRUE)
+
+      if(COUNTRY == "jp")
+        wholeData <- loadCompactPowerData(path = csvFile, sampling_rate = 10, human_date = TRUE, tz = "Asia/Tokyo", cleanse = TRUE)
+      else if(COUNTRY == "kr")
+        wholeData <- loadCompactPowerData(path = csvFile, sampling_rate = 15, human_date = TRUE, tz = "Asia/Seoul", cleanse = TRUE)
 
       if(!is.null(wholeData)) {
 

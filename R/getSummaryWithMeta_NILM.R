@@ -1,6 +1,7 @@
 #' @export
 getSummaryWithMeta_NILM <- function(DATA_DIR,
                                     CHOSEN_APP,
+                                    COUNTRY,
                                     startTimestampForMeta,
                                     endTimestampForMeta,
                                     startTimestampForSummary = NULL,
@@ -72,16 +73,30 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
     if(nrow(householdPower) != 0){
 
       indicator <- paste(indicator[[1]][1],indicator[[1]][3], sep = "_")
-      meta <- forceWasher_jp_new(X = householdPower, samplingRate = 10)
+      if (CHOSEN_APP == "세탁기")
+        meta <- forceWasher(X = householdPower, country = toupper(COUNTRY), debug = FALSE)
+      else if (CHOSEN_APP == "전기밥솥")
+        meta <- forceRiceCooker(data = householdPower, country = toupper(COUNTRY))
+      else
+        stop("invalid appliance")
+
       meta$siteId <- indicator
       saveRDS(meta, paste0(META_DIR,indicator,"_",CHOSEN_APP,".rds"))
 
       if( (length(startTimestampForSummary) != 0) && (length(endTimestampForSummary) != 0) ){
+
         consideredTimePeriod <- as.POSIXct(startTimestampForSummary, tz = 'Asia/Seoul') %--% as.POSIXct(endTimestampForSummary, tz = 'Asia/Seoul')
         householdPower <- rawPowerData %>% filter(timestamp %within% consideredTimePeriod)
+
       }
 
-      NILM_result <- predict.forceWasher_jp_new(meta = meta, data = householdPower)
+      if (CHOSEN_APP == "세탁기")
+        NILM_result <- predict.forceWasher(meta = meta, data = householdPower, country = toupper(COUNTRY), debug = FALSE)
+      else if (CHOSEN_APP == "전기밥솥")
+        NILM_result <- predict.forceRiceCooker(object = householdPower, meta = meta, country = toupper(COUNTRY))
+      else
+        stop("invalid appliance")
+
       plugFile <- paste0(DATA_DIR, x$plug)
       plug_result <- read_feather(plugFile) %>% filter(timestamp %within% consideredTimePeriod) %>%
                                                 arrange(timestamp)
