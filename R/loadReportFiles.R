@@ -40,22 +40,26 @@ loadReportFiles <- function(USER_LIST,
 
   EXCLUDE_ID <- EXCLUDE_ID %>% unique(.)
 
+  enertalkDevice <- USER_LIST %>% filter(division == "총량")
 
-  enertalkDevice <- USER_LIST %>% filter(division == "총량") %>%
-    select(user, skey = sn.dev, pid = sn.parent, code) %>% unique(.) %>%
-    mutate(class = "home") %>% mutate(division = class) %>%
-    mutate(division = paste(convertHex2Dec(skey), division, sep='_'))
+  if (any(is.na(enertalkDevice$sn.dev)))
+    print("warning: remove meters w/ no device id")
 
+  enertalkDevice <-
+    enertalkDevice %>%
+    select(user, skey = sn.dev, pid = sn.parent, code) %>%
+    filter(!is.na(skey)) %>%
+    mutate(class = "home") %>%
+    mutate(division = class) %>%
+    mutate(division = paste(convertHex2Dec(skey), division, sep = '_'))
 
   if(length(CHOSEN_APP) != 0)
     plugDevice <- USER_LIST %>% filter(division %in% CHOSEN_APP)
   else
     plugDevice <- USER_LIST %>% filter(division != "총량")
 
-  if(any(is.na(plugDevice$sn.parent))){
+  if (any(is.na(plugDevice$sn.parent)))
     print("warning: remove plugs w/ no parent id")
-  }
-
 
   plugDevice <- plugDevice %>%
                 select(user,

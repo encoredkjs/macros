@@ -9,14 +9,21 @@ FLAG_ONLY_HOME <- F
 HOME_CHANNEL <- 1 # valid when FLAG_ONLY_HOME == TRUE
 
 FILE_SEP <- "_"
-FILE_FIRST_WORD <- "4076994665"
+FILE_FIRST_WORD <- "4093638545"
+# F3FFFF6F
+# 4093640559
+# F3FFFF79
+# 4093640569
+# F3FFF791
+# 4093638545
 FILE_TYPE <- ".feather" # feather only
 
-COUNTRY <- "JP"
+# COUNTRY <- "JP"
+COUNTRY <- "KR"
 
 # HOUSEHOLD_DIR <- "/home/sjlee/data/jpData/test1/feather/" # June 2016
-HOUSEHOLD_DIR <- "/home/kjs/data/jp/jp_201612/teto/" # August 2016
-TIME_PERIOD <- as.POSIXct('2016-12-17 09:02:10',tz='Asia/Seoul')%--% as.POSIXct('2016-12-17 09:02:20',tz='Asia/Seoul')
+HOUSEHOLD_DIR <- "/home/kjs/data/kr/kr_201611/files/" # August 2016
+TIME_PERIOD <- as.POSIXct('2016-11-16 06:10:00',tz='Asia/Seoul') %--% as.POSIXct('2016-11-16 06:40:00',tz='Asia/Seoul')
 # TIME_PERIOD <- as.POSIXct('2016-12-13 18:08:00',tz='Asia/Seoul')%--% as.POSIXct('2016-12-13 18:10:00',tz='Asia/Seoul')
 # TIME_PERIOD <- as.POSIXct('2016-07-17 08:30:00',tz='Asia/Seoul') %--% as.POSIXct('2016-07-17 09:30:00',tz='Asia/Seoul')
 
@@ -81,8 +88,8 @@ CHOSEN_SITE_HEX <- c("F3FFFEEB",
 EXCLUDE_ID_DEC <- c() # FINE WITH PLUG SERIALS
 EXCLUDE_ID_HEX <- c()
 
-# CHOSEN_APP <- c("세탁기","전기밥솥")
-CHOSEN_APP <- c("세탁기")
+CHOSEN_APP <- c("세탁기","전기밥솥")
+# CHOSEN_APP <- c("세탁기")
 
 ID_START <- '20161101' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
 ID_END   <- '20161130' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
@@ -99,22 +106,22 @@ loadReportFiles(USER_LIST, SOURCE_DIR, DATA_DIR, OBJ, COUNTRY, CHOSEN_SITE_DEC, 
 library(macros)
 
 # parameter setting
-DATA_DIR <- "/home/kjs/data/jp/jp_201610/yazaki/"
+DATA_DIR <- "/home/kjs/data/jp/jp_201612/temp/"
 
 CHOSEN_APP <- "세탁기"
 
-COUNTRY <- "kr"
-# COUNTRY <- "jp"
+# COUNTRY <- "kr"
+COUNTRY <- "jp"
 
-startTimestampForMeta <- "2016-10-01 00:00:00"
-endTimestampForMeta <- "2016-10-15 00:00:00"
+startTimestampForMeta <- "2016-12-11 00:00:00"
+endTimestampForMeta <- "2016-12-25 00:00:00"
 
-startTimestampForSummary <- NULL # "2016-10-01 00:00:00"
-endTimestampForSummary <- NULL # "2016-10-15 00:00:00"
+startTimestampForSummary <- "2016-12-21 00:00:00" # NULL # "2016-10-01 00:00:00"
+endTimestampForSummary <- "2016-12-31 00:00:00" # NULL # "2016-10-15 00:00:00"
 
 POWER_THRES <- 1
 
-CHOSEN_SITE_DEC <- c() # c(4093509610, 4093509620, 4093509618)
+CHOSEN_SITE_DEC <- c(4076994594, 4076994643) # c(4093509610, 4093509620, 4093509618)
 CHOSEN_SITE_HEX <- c()
 
 getSummaryWithMeta_NILM(DATA_DIR, CHOSEN_APP, COUNTRY,
@@ -129,9 +136,10 @@ getSummaryWithMeta_NILM(DATA_DIR, CHOSEN_APP, COUNTRY,
 library(macros)
 
 # parameter setting
-SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:49:06.065606/"
+# SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:49:06.065606/"
 # SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T04:15:53.702929/"
-SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:48:16.153141/"
+# SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:48:16.153141/"
+SUMMARY_DIR <- "/home/kjs/data/jp/jp_201612/summary_세탁기_temp/"
 FIGURE_FILE <- "HeatMap.png"
 APP_NAME <- "세탁기"
 # APP_NAME <- "전기밥솥"
@@ -189,6 +197,14 @@ modifyFilesUsingSysCommand(SOURCE_DIR,
                            DO_FUNCTION)
 # =========================================================================================================
 
-x <- fread("~/jsonForReport/tepcoSample/result/F3FDFFF1_NILM_1s_62_refrigerator1_2016-12")
+# =========================================================================================================
+# FUNCTION TO CHECK OUT THE SIZE OF FUNCTIONS IN A PACKAGE
+
+# in a project of a package,
+library(macros)
+devtools::load_all()
+packageFunctionLengths("ForceEvent") -> fLength
+sort(fLength,decreasing = T)
+# =========================================================================================================
 
 

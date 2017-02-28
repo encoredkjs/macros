@@ -64,7 +64,7 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
     homeFile <- paste0(DATA_DIR, x$home)
     indicator <- str_split(x$home, "_", n = Inf)
     print(indicator[[1]][1])
-    rawPowerData <- read_feather(homeFile)
+    rawPowerData <- read_feather(homeFile[1])
 
     # get result
     consideredTimePeriod <- as.POSIXct(startTimestampForMeta, tz = 'Asia/Seoul') %--% as.POSIXct(endTimestampForMeta, tz = 'Asia/Seoul')
@@ -97,10 +97,30 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
       else
         stop("invalid appliance")
 
-      plugFile <- paste0(DATA_DIR, x$plug)
+      # plug data
+      plugFile <- paste0(DATA_DIR, x$plug[1])
       plug_result <- read_feather(plugFile) %>% filter(timestamp %within% consideredTimePeriod) %>%
-                                                arrange(timestamp)
+                     mutate(active_power = abs(active_power)) %>% arrange(timestamp)
       plug_result <- plug_result[!duplicated(plug_result$timestamp), ]
+
+
+      if (nrow(x) >= 2){
+
+        for(plugIdx in 2:nrow(x)) {
+
+          plugFile <- paste0(DATA_DIR, x$plug[plugIdx])
+          another_plug_result <- read_feather(plugFile) %>% filter(timestamp %within% consideredTimePeriod) %>%
+                                 mutate(active_power = abs(active_power)) %>% arrange(timestamp)
+
+          another_plug_result <- another_plug_result[!duplicated(another_plug_result$timestamp), ]
+
+          tmp_combined_result <- full_join(plug_result, another_plug_result, by = "timestamp")
+
+          plug_result <- data.frame(timestamp = tmp_combined_result$timestamp, active_power = rowSums(tmp_combined_result %>% select(active_power.x,active_power.y), na.rm = TRUE),
+                                    reactive_power = rowSums(tmp_combined_result %>% select(reactive_power.x,reactive_power.y), na.rm = TRUE)) %>% arrange(timestamp)
+        }
+
+      }
 
       result <- summary.acc(NILM_result$usage, plug_result, threshold = c(POWER_THRES,POWER_THRES), time_unit = "15 mins")
       result$siteId <- indicator

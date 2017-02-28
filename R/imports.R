@@ -4,13 +4,15 @@ NULL
 NULL
 #' @import feather
 NULL
+#' @import ggplot2
+NULL
 #' @import rmarkdown
 NULL
 #' @importFrom baseEncored convertHex2Dec convertDec2Hex
 NULL
 #' @importFrom data.table fread fwrite
 NULL
-#' @importFrom destroyForce summary.acc generateReportCore
+#' @importFrom destroyForce generateReportCore ggplot_onoff_tile summary.acc
 NULL
 #' @importFrom ForceEvent forceRiceCooker predict.forceRiceCooker
 NULL
