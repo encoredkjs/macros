@@ -3,7 +3,18 @@ plotHousehold <- function(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, T
 
   wholeFileList <- list.files(path = HOUSEHOLD_DIR, full.names = FALSE, include.dirs = FALSE)
 
-  chkWord <- sapply(wholeFileList, function(x) getOneWordFromString(string = x, position = 1, sep = FILE_SEP) == FILE_FIRST_WORD, USE.NAMES = FALSE)
+  if (FILE_TYPE == ".feather") {
+    chkWord <- sapply(wholeFileList, function(x) getOneWordFromString(string = x,
+                                                                      position = 1,
+                                                                      sep = FILE_SEP) == FILE_FIRST_WORD, USE.NAMES = FALSE)
+
+  } else if (FILE_TYPE == ".csv") {
+    chkWord <- sapply(wholeFileList, function(x) getMoreThanOneWordFromString(string = x,
+                                                                              position_start = 1,
+                                                                              position_end = 3,
+                                                                              sep = FILE_SEP) == FILE_FIRST_WORD, USE.NAMES = FALSE)
+  }
+
   chkType <- grepl(pattern = FILE_TYPE, x = wholeFileList)
 
   chosenFiles <- wholeFileList[chkWord & chkType]
@@ -14,20 +25,51 @@ plotHousehold <- function(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, T
 
   if(FLAG_ONLY_HOME) {
 
-    homeIdx <- grep(pattern = "home", x = chosenFiles)
+    if (FILE_TYPE == ".feather") {
+      homeIdx <- grep(pattern = "home", x = chosenFiles)
+    } else if (FILE_TYPE == ".csv") {
+      homeIdx <- grep(pattern = "_00_", x = chosenFiles)
+    }
 
     if(length(homeIdx) != 1)
       stop("not a valid home")
 
     print(chosenFiles[homeIdx])
 
-    if (COUNTRY == "KR")
-      meterReadings <- read_feather(paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx])) %>%
-        filter(timestamp %within% TIME_PERIOD)
-    else if (COUNTRY == "JP")
-      meterReadings <- read_feather(paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx])) %>%
-        filter(timestamp %within% TIME_PERIOD, channel == HOME_CHANNEL)
+    if (COUNTRY == "KR"){
 
+      if (FILE_TYPE == ".feather") {
+        meterReadings <-
+          read_feather(paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx]))
+
+      } else if (FILE_TYPE == ".csv") {
+        meterReadings <-
+          MillenniumFalcon::loadCompactPowerData(path = paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx]),
+                                                 sampling_rate = 15,
+                                                 human_date = TRUE,
+                                                 tz = "Asia/Seoul",
+                                                 cleanse = TRUE)
+      }
+
+      meterReadings %<>% filter(timestamp %within% TIME_PERIOD)
+
+    } else if (COUNTRY == "JP") {
+
+      if (FILE_TYPE == ".feather") {
+        meterReadings <-
+          read_feather(paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx]))
+      } else if (FILE_TYPE == ".csv") {
+        meterReadings <-
+          MillenniumFalcon::loadCompactPowerData(path = paste0(HOUSEHOLD_DIR, chosenFiles[homeIdx]),
+                                                 sampling_rate = 10,
+                                                 human_date = TRUE,
+                                                 tz = "Asia/Seoul",
+                                                 cleanse = TRUE)
+      }
+
+      meterReadings %<>% filter(timestamp %within% TIME_PERIOD, channel == HOME_CHANNEL)
+
+    }
 
     melt.active <- data.frame(timestamp = meterReadings$timestamp, value = meterReadings$active_power, sig_type = 'active')
     melt.reactive <- data.frame(timestamp = meterReadings$timestamp, value = meterReadings$reactive_power, sig_type = 'reactive')
@@ -44,13 +86,46 @@ plotHousehold <- function(FILE_SEP, FILE_FIRST_WORD, FILE_TYPE, HOUSEHOLD_DIR, T
       aFile <- chosenFiles[idx]
       print(aFile)
 
-      meterReadings <- read_feather(paste0(HOUSEHOLD_DIR, aFile)) %>% filter(timestamp %within% TIME_PERIOD)
+      if (FILE_TYPE == ".feather") {
+
+        meterReadings <- read_feather(paste0(HOUSEHOLD_DIR, aFile))
+      } else if (FILE_TYPE == ".csv") {
+
+        if (COUNTRY == "KR") {
+          meterReadings <-
+            MillenniumFalcon::loadCompactPowerData(
+              path = paste0(HOUSEHOLD_DIR, aFile),
+              sampling_rate = 15,
+              human_date = TRUE,
+              tz = "Asia/Seoul",
+              cleanse = TRUE
+            )
+        } else if (COUNTRY == "JP") {
+          meterReadings <-
+            MillenniumFalcon::loadCompactPowerData(
+              path = paste0(HOUSEHOLD_DIR, aFile),
+              sampling_rate = 10,
+              human_date = TRUE,
+              tz = "Asia/Seoul",
+              cleanse = TRUE
+            )
+        }
+      }
+
+      meterReadings %<>% filter(timestamp %within% TIME_PERIOD)
+
       if(nrow(meterReadings) == 0){
         print("no data")
         next
       }
 
-      if( grepl(pattern = "home", x = aFile) ){
+      if (FILE_TYPE == ".feather") {
+        isHome <- grepl(pattern = "home", x = aFile)
+      } else if (FILE_TYPE == ".csv") {
+        isHome <- grepl(pattern = "_00_", x = aFile)
+      }
+
+      if( isHome ){
 
         if (COUNTRY == "JP") {
           for(idx_ch in seq(1,2)){

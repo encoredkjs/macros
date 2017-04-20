@@ -3,27 +3,29 @@
 # libraries
 library(lubridate)
 library(macros)
+library(MillenniumFalcon)
 
 # parameter setting
 FLAG_ONLY_HOME <- F
 HOME_CHANNEL <- 1 # valid when FLAG_ONLY_HOME == TRUE
 
 FILE_SEP <- "_"
-FILE_FIRST_WORD <- "4093638545"
-# F3FFFF6F
-# 4093640559
-# F3FFFF79
-# 4093640569
-# F3FFF791
-# 4093638545
-FILE_TYPE <- ".feather" # feather only
 
-# COUNTRY <- "JP"
-COUNTRY <- "KR"
+# FILE_FIRST_WORD <- "4076994762"
+# FILE_TYPE <- ".feather"
+
+FILE_FIRST_WORD <- "data_F30200C8_20170203-20170204"
+FILE_TYPE <- ".csv"
+
+
+
+
+COUNTRY <- "JP"
+# COUNTRY <- "KR"
 
 # HOUSEHOLD_DIR <- "/home/sjlee/data/jpData/test1/feather/" # June 2016
-HOUSEHOLD_DIR <- "/home/kjs/data/kr/kr_201611/files/" # August 2016
-TIME_PERIOD <- as.POSIXct('2016-11-16 06:10:00',tz='Asia/Seoul') %--% as.POSIXct('2016-11-16 06:40:00',tz='Asia/Seoul')
+HOUSEHOLD_DIR <- "/disk3/raw_data_with_plug/jp-201702/" # August 2016
+TIME_PERIOD <- as.POSIXct('2017-02-03 02:00:00',tz='Asia/Seoul') %--% as.POSIXct('2017-02-04 02:00:00',tz='Asia/Seoul')
 # TIME_PERIOD <- as.POSIXct('2016-12-13 18:08:00',tz='Asia/Seoul')%--% as.POSIXct('2016-12-13 18:10:00',tz='Asia/Seoul')
 # TIME_PERIOD <- as.POSIXct('2016-07-17 08:30:00',tz='Asia/Seoul') %--% as.POSIXct('2016-07-17 09:30:00',tz='Asia/Seoul')
 
@@ -61,38 +63,38 @@ options(httr_oob_default = TRUE)
 # supplementary functions
 targetGs <- gs_key(gs_ls('데이터 시리얼 관리표')$sheet_key)
 userList <-
-  gs_read(targetGs, ws = '메타정보관리-kr') # %>% filter( !grepl(pattern = "야자키", x = Owner),
+  gs_read(targetGs, ws = '메타정보관리-jp') # %>% filter( !grepl(pattern = "야자키", x = Owner),
                                             # !grepl(pattern = "tepco", x = Owner),
                                             # !grepl(pattern = "tohokuepco", x = Owner))
 
-names(userList) <- c("sn.parent", "ch.parent", "sn.dev", "ch.dev", "user", "division", "code", "x1", "x2","x3","x4","x5","x6","x7","x8","x9","x10")
+names(userList) <- c("sn.parent", "ch.parent", "sn.dev", "ch.dev", "user", "division", "code", "x1", "x2","x3","x4","x5","x6","x7","x8","x9")
 userList <- userList %>% select(user, division, code, sn.parent, sn.dev)
 
 # parameter setting
 USER_LIST <- userList
-DATA_DIR <- "/home/kjs/data/kr/kr_201611/files/"
-SOURCE_DIR <- "/disk3/raw_data_with_plug/kr-201611/"
+DATA_DIR <- "/home/kjs/data/jp/jp_201702/files/"
+SOURCE_DIR <- "/disk3/raw_data_with_plug/jp-201702/"
 
 # OBJ <- "home"
 OBJ <- "plug"
 
-COUNTRY <- "kr"
-# COUNTRY <- "jp"
+# COUNTRY <- "kr"
+COUNTRY <- "jp"
 
 CHOSEN_SITE_DEC <- c() # c(4093509610, 4093509620, 4093509618)
 # CHOSEN_SITE_HEX <- c("F3FDFFB9", "F3FDFFEF", "F3FDFFF1", "F3FDFFF2", "F3FDFFF3", "F3FDFFF4", "F3FDFFF5", "F3FDFFFE", "F3FFF787", "F3FDFFEC")
-CHOSEN_SITE_HEX <- c("F3FFFEEB",
-                     "F3FFFF9A",
-                     "F3FFFFD7")
+CHOSEN_SITE_HEX <- c("F3FDFFF5", "F3FDFFC3", "F3FDFFC5", "F3FDFFDC", "F3FDFFE2", "F3FDFFD1", "F3FDFFDF", "F3FDFFD8", "F3FDFFDB", "F3FDFFEC",
+                     "F3FDFFCA", "F3FDFFBB", "F3FDFFE8", "F302002E", "F3020053", "F3020026", "F3FDFFC0", "F3FDFFBE", "F3FDFFBC", "F302006F",
+                     "F3020070", "F30200C8", "F30200C9", "F30200CA", "F30200CB", "F30200CD", "F30200CE", "F30200CF", "F30200D1")
 
 EXCLUDE_ID_DEC <- c() # FINE WITH PLUG SERIALS
 EXCLUDE_ID_HEX <- c()
 
-CHOSEN_APP <- c("세탁기","전기밥솥")
-# CHOSEN_APP <- c("세탁기")
+# CHOSEN_APP <- c("세탁기","전기밥솥")
+CHOSEN_APP <- c("에어컨")
 
-ID_START <- '20161101' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
-ID_END   <- '20161130' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
+ID_START <- '20170201' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
+ID_END   <- '20170228' # this parameter cannot choose proper duration (i.e., whole data is considered for a month)
 
 IGNORE_EXIST_DATA <- TRUE
 
@@ -138,8 +140,8 @@ library(macros)
 # parameter setting
 # SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:49:06.065606/"
 # SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T04:15:53.702929/"
-# SUMMARY_DIR <- "/disk3/data_tmp/2017-01-05T05:48:16.153141/"
-SUMMARY_DIR <- "/home/kjs/data/jp/jp_201612/summary_세탁기_temp/"
+SUMMARY_DIR <- "~/report/result/jp_201702_washer_170419_chkDensity/summary/"
+# SUMMARY_DIR <- "/home/kjs/data/jp/jp_201612/summary_세탁기_temp/"
 FIGURE_FILE <- "HeatMap.png"
 APP_NAME <- "세탁기"
 # APP_NAME <- "전기밥솥"

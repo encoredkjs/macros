@@ -16,8 +16,6 @@ NULL
 NULL
 #' @importFrom ForceEvent forceRiceCooker predict.forceRiceCooker
 NULL
-#' @importFrom ForcePattern forceWasher predict.forceWasher
-NULL
 #' @importFrom graphics plot
 NULL
 #' @importFrom JediETL convertKey
