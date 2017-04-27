@@ -77,6 +77,8 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
         meta <- forceWasher(X = householdPower, country = toupper(COUNTRY), debug = FALSE)
       else if (CHOSEN_APP == "전기밥솥")
         meta <- forceRiceCooker(data = householdPower, country = toupper(COUNTRY))
+      else if (CHOSEN_APP == "에어컨")
+        meta <- 0.0
       else
         stop("invalid appliance")
 
@@ -94,6 +96,8 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
         NILM_result <- predict.forceWasher(meta = meta, data = householdPower, country = toupper(COUNTRY), debug = FALSE)
       else if (CHOSEN_APP == "전기밥솥")
         NILM_result <- predict.forceRiceCooker(object = householdPower, meta = meta, country = toupper(COUNTRY))
+      else if (CHOSEN_APP == "에어컨")
+        NILM_result <- predict.forceAirConditioner(data = householdPower, debug = TRUE)
       else
         stop("invalid appliance")
 
