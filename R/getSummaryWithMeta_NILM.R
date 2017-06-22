@@ -8,7 +8,10 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
                                     endTimestampForSummary = NULL,
                                     POWER_THRES,
                                     CHOSEN_SITE_DEC,
-                                    CHOSEN_SITE_HEX) {
+                                    CHOSEN_SITE_HEX,
+                                    EXCLUDE_ID_DEC,
+                                    EXCLUDE_ID_HEX
+                                    ) {
 
   splittedDirName <- str_split(DATA_DIR, "/", n = Inf)
 
@@ -36,6 +39,15 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
 
   CHOSEN_SITE <- CHOSEN_SITE %>% unique(.)
 
+  ### -------------------------------------------------
+
+  if(length(EXCLUDE_ID_HEX) != 0)
+    EXCLUDE_ID <- c(convertHex2Dec(EXCLUDE_ID_HEX), EXCLUDE_ID_DEC)
+  else
+    EXCLUDE_ID <- EXCLUDE_ID_DEC
+
+  EXCLUDE_ID <- EXCLUDE_ID %>% unique(.)
+
   # load entire files
   wholeFileList <- list.files(path = DATA_DIR, full.names = FALSE, include.dirs = FALSE)
   wholeFileList <- wholeFileList[grep("feather", wholeFileList)]
@@ -46,10 +58,17 @@ getSummaryWithMeta_NILM <- function(DATA_DIR,
 
   # build home & plug set
   if(length(CHOSEN_SITE) != 0){
-    pairsForHomePlug <- data.frame(fileName = wholeFileList, indicator = siteIdx) %>% filter(indicator %in% CHOSEN_SITE) %>% group_by(indicator) %>%
+    pairsForHomePlug <-
+      data.frame(fileName = wholeFileList, indicator = siteIdx) %>%
+      filter(indicator %in% CHOSEN_SITE) %>%
+      filter(!(indicator %in% EXCLUDE_ID)) %>%
+      group_by(indicator) %>%
       do( matchHomePlugFile(data = ., plug = CHOSEN_APP) )
   } else {
-    pairsForHomePlug <- data.frame(fileName = wholeFileList, indicator = siteIdx) %>% group_by(indicator) %>%
+    pairsForHomePlug <-
+      data.frame(fileName = wholeFileList, indicator = siteIdx) %>%
+      filter(!(indicator %in% EXCLUDE_ID)) %>%
+      group_by(indicator) %>%
       do( matchHomePlugFile(data = ., plug = CHOSEN_APP) )
   }
 
